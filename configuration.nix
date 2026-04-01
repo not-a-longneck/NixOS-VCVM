@@ -48,7 +48,7 @@
   users.users.admin = {
     isNormalUser = true;
     description = "admin";
-    extraGroups = [ "networkmanager" "wheel""video" "render" "storage" ];
+    extraGroups = [ "networkmanager" "wheel""video" "render" "storage" "disk"];
     hashedPassword = "$6$Osqk1/PTMVPFxz.R$xnhXNz5ePRgPQZtGMaXlSDInDsrwNocuRqVmTfZcq4ujAer6PiesG27vZpkxdMJh3gtSzP9qOlTs8CTP9Pf.f/";
 
   };
@@ -95,8 +95,13 @@
       fsType = "cifs";
       # Force read-write and give you (uid=1000) full control
       options = [
-        "guest,uid=1000,gid=100,rw,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm,_netdev"
-        "x-systemd.automount,x-systemd.idle-timeout=60"
+        "guest"          # No password needed
+        "uid=1000"       # Tells Linux the 'admin' user owns everything here
+        "gid=100"        # The 'users' group
+        "noperm"         # CRITICAL: Tells the client to stop local permission checks
+        "iocharset=utf8"
+        "vers=3.0"       # Ensures you're using a modern SMB version
+        "soft"           # Prevents the VM from freezing if Unraid goes offline
       ];
     };
 
