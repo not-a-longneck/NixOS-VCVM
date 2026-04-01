@@ -30,7 +30,11 @@
   networking.hostName = "nixos"; # Define your hostname.
   networking.networkmanager.enable = true;
 
-
+  boot.kernelModules = [ "fuse" ];
+  # This allows non-root users to use the allow_other mount option
+  environment.etc."fuse.conf".text = ''
+    user_allow_other
+  '';
 
 
 
