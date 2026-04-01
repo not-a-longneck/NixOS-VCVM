@@ -65,7 +65,7 @@
       metadata-network-access=0
       show-hiddenfiles=1
       playlist-tree=0
-      recursive=1
+      recursive=expand
       random=1
       loop=1
       [qt]
