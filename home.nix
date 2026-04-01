@@ -97,6 +97,7 @@
     services.flatpak.overrides."org.jdownloader.JDownloader".Context.filesystems = [
       "xdg-download:rw"
       "/tmp:rw"
+      "/mnt:rw"
     ];
 
 
