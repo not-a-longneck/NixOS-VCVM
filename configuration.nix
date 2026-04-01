@@ -57,6 +57,20 @@
 
   };
 
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    # Add extra configuration to stabilize the clock
+    extraConfig.pipewire."92-low-latency" = {
+      "context.properties" = {
+        "default.clock.rate" = 48000;
+        "default.clock.quantum" = 1024; # Increasing this helps with choppiness
+        "default.clock.min-quantum" = 512;
+        "default.clock.max-quantum" = 2048;
+      };
+    };
+  };
 
 
   # ==============================
