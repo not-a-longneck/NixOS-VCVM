@@ -64,14 +64,15 @@
       [core]
       metadata-network-access=0
       show-hiddenfiles=1
-      playlist-tree=1
-      recursive=2
+      playlist-tree=0
+      recursive=1
       random=1
       loop=1
       [qt]
       qt-privacy-ask=0
       qt-notification=0
       qt-video-autoresize=0
+
   '';
   force = true;
 
