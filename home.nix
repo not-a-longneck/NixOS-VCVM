@@ -115,22 +115,17 @@
   ####################################
 
   programs.git = {
-  enable = true;
-  userName  = "NixOS";
-  userEmail = "hjalte81@gmail.com";
+    enable = true;
+    userName  = "NixOS";
+    userEmail = "hjalte81@gmail.com";
 
-  # Optional: Extra settings for a better workflow
-  extraConfig = {
-    init.defaultBranch = "main";
-    pull.rebase = true;
+    # Optional: Extra settings for a better workflow
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+    };
   };
 
-  # Optional: Aliases to save typing
-  aliases = {
-    s = "status";
-    co = "checkout";
-    cm = "commit";
-  };
-};
+  #-----------
 
-  }
+}
