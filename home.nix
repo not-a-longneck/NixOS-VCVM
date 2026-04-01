@@ -1,0 +1,136 @@
+{ inputs, config, lib, pkgs, ... }: {
+
+  imports = [
+      inputs.nix-flatpak.homeManagerModules.nix-flatpak
+      inputs.plasma-manager.homeManagerModules.plasma-manager
+
+  ];
+
+  home.username = "admin";
+  home.homeDirectory = "/home/admin";
+  home.stateVersion = "25.05"; # Use the version you installed
+
+  ###################################
+  #### OPEN FILES IN mimeApps    ####
+  ###################################
+
+  xdg.enable = true;
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "video/mp4" = [ "vlc.desktop" ];
+      "video/x-matroska" = [ "vlc.desktop" ];
+      "video/webm" = [ "vlc.desktop" ];
+      "video/quicktime" = [ "vlc.desktop" ];
+      "video/x-msvideo" = [ "vlc.desktop" ]; # AVI
+      "video/mpeg" = [ "vlc.desktop" ];
+      "video/ogg" = [ "vlc.desktop" ];
+      "video/x-flv" = [ "vlc.desktop" ];       # This covers Flash video
+      "video/3gpp" = [ "vlc.desktop" ];        # This covers old phone videos
+    };
+  };
+
+  ###################################
+  #### APPS TO INSTAL WITH HM    ####
+  ###################################
+
+  programs.home-manager.enable = true;
+
+
+  # Packages just for your user
+  home.packages = with pkgs; [
+    vlc
+    tor-browser
+
+  ];
+
+  # Flatpaks
+  services.flatpak = {
+    enable = true;
+    packages = [
+      "org.jdownloader.JDownloader"
+    ];
+  };
+
+
+
+  ###################################
+  #### PROGRAM SPECIFIC SETTINGS ####
+  ###################################
+
+  # VLC Config
+  home.file.".config/vlc/vlcrc" = {
+    text = ''
+      [core]
+      metadata-network-access=0
+      show-hiddenfiles=1
+      playlist-tree=1
+      recursive=2
+      random=1
+      loop=1
+      [qt]
+      qt-privacy-ask=0
+      qt-notification=0
+      qt-video-autoresize=0
+  '';
+  force = true;
+
+  };
+
+
+  # Tor browser
+  home.file.".tor project/TorBrowser/Data/Browser/profile.default/user.js" = {
+    text = ''
+      user_pref("javascript.enabled", false);
+      user_pref("extensions.torlauncher.prompt_at_startup", false);
+      user_pref("network.bootstrapped", true);
+      user_pref("intl.accept_languages", "en-US, en");
+      user_pref("intl.locale.requested", "en-US");
+      user_pref("browser.toolbars.bookmarks.visibility", "never");
+    '';
+  };
+
+
+
+  # JDownloader Permissions (Separated for clarity)
+    services.flatpak.overrides."org.jdownloader.JDownloader".Context.filesystems = [
+      "xdg-download:rw"
+      "/tmp:rw"
+    ];
+
+
+
+
+  ####################################
+  #### Symlinks                   ####
+  ####################################
+
+  home.file."Unraid".source = config.lib.file.mkOutOfStoreSymlink "/mnt/tower/backups";
+
+
+
+
+  ####################################
+  #### GITHUB                     ####
+  ####################################
+
+  programs.git = {
+  enable = true;
+  userName  = "NixOS";
+  userEmail = "hjalte81@gmail.com";
+
+  # Optional: Extra settings for a better workflow
+  extraConfig = {
+    init.defaultBranch = "main";
+    pull.rebase = true;
+  };
+
+  # Optional: Aliases to save typing
+  aliases = {
+    s = "status";
+    co = "checkout";
+    cm = "commit";
+  };
+};
+
+  }
