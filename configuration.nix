@@ -76,6 +76,7 @@
     cifs-utils
     veracrypt
     kdePackages.kate
+    ntfs3g
 
 
   ];
