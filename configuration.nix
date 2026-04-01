@@ -99,6 +99,8 @@
         "uid=1000"       # Tells Linux the 'admin' user owns everything here
         "gid=100"        # The 'users' group
         "noperm"         # CRITICAL: Tells the client to stop local permission checks
+        "nobrl"          # <--- THIS IS THE MAGIC KEY
+        "cache=none"     # Prevents Linux from "holding onto" the file in RAM
         "iocharset=utf8"
         "vers=3.0"       # Ensures you're using a modern SMB version
         "soft"           # Prevents the VM from freezing if Unraid goes offline
