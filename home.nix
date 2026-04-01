@@ -94,13 +94,17 @@
 
 
   # JDownloader Permissions (Separated for clarity)
-    services.flatpak.overrides."org.jdownloader.JDownloader".Context.filesystems = [
+services.flatpak.overrides."org.jdownloader.JDownloader".Context = {
+    filesystems = [
       "xdg-download:rw"
       "/tmp:rw"
       "/mnt:rw"
       "/mnt/veracrypt1/:rw"
     ];
-
+    # ADD THESE TWO LINES:
+    sockets = [ "x11" "wayland" "fallback-x11" ];
+    shared = [ "network" "ipc" ];
+  };
 
 
 
