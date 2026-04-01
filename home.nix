@@ -104,6 +104,7 @@ services.flatpak.overrides."org.jdownloader.JDownloader".Context = {
     # ADD THESE TWO LINES:
     sockets = [ "x11" "wayland" "fallback-x11" ];
     shared = [ "network" "ipc" ];
+    bus-talk = [ "org.freedesktop.NetworkManager" ];
   };
 
 
