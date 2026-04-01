@@ -98,6 +98,8 @@
         "guest"          # No password needed
         "uid=1000"       # Tells Linux the 'admin' user owns everything here
         "gid=100"        # The 'users' group
+        "forceuid"       # <--- FORCES recursive ownership for 'admin'
+        "forcegid"       # <--- FORCES recursive ownership for 'users'
         "noperm"         # CRITICAL: Tells the client to stop local permission checks
         "nobrl"          # <--- THIS IS THE MAGIC KEY
         "cache=none"     # Prevents Linux from "holding onto" the file in RAM
