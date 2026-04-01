@@ -98,6 +98,7 @@
       "xdg-download:rw"
       "/tmp:rw"
       "/mnt:rw"
+      "/mnt/veracrypt1/:rw"
     ];
 
 
