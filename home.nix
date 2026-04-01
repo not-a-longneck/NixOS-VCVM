@@ -41,7 +41,6 @@
   home.packages = with pkgs; [
     vlc
     tor-browser
-    pyload-ng
 
   ];
 

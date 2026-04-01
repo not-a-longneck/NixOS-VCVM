@@ -77,6 +77,8 @@
     veracrypt
     kdePackages.kate
     ntfs3g
+    pyload-ng
+
 
 
   ];
