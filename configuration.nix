@@ -95,7 +95,7 @@
       fsType = "cifs";
       # Force read-write and give you (uid=1000) full control
       options = [
-        "guest,uid=1000,gid=100,rw,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm,_netdev, allow_other"
+        "guest,uid=1000,gid=100,rw,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm,_netdev"
         "x-systemd.automount,x-systemd.idle-timeout=60"
       ];
     };
