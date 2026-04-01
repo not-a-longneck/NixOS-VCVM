@@ -48,7 +48,7 @@
   users.users.admin = {
     isNormalUser = true;
     description = "admin";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel""video" "render" "storage" ];
     hashedPassword = "$6$Osqk1/PTMVPFxz.R$xnhXNz5ePRgPQZtGMaXlSDInDsrwNocuRqVmTfZcq4ujAer6PiesG27vZpkxdMJh3gtSzP9qOlTs8CTP9Pf.f/";
 
   };
@@ -69,9 +69,10 @@
 
   environment.systemPackages = with pkgs; [
     spice-vdagent # for vm features
+    cifs-utils
     veracrypt
     kdePackages.kate
-    cifs-utils
+
 
   ];
 
@@ -94,7 +95,7 @@
       fsType = "cifs";
       # Force read-write and give you (uid=1000) full control
       options = [
-        "guest,uid=1000,gid=100,rw,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm,_netdev"
+        "guest,uid=1000,gid=100,rw,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm,_netdev, allow_other"
         "x-systemd.automount,x-systemd.idle-timeout=60"
       ];
     };
@@ -136,7 +137,7 @@
   };
 
 
-  ## Testing github build
+
 
 
   ######
