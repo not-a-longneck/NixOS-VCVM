@@ -166,8 +166,21 @@
       copypaste = "spice-vdagent";
   };
 
+  # ===============================
+  # ==== Privacy               ====
+  # ===============================
 
+  fileSystems."/home/admin/.cache" = {
+    device = "tmpfs";
+    fsType = "tmpfs";
+    options = [ "nosuid" "nodev" "relatime" "size=1G" ];
+  };
 
+  # disable core dumps on crash
+  systemd.coredump.enable = false;
+
+  # keep logs in ram
+  services.journald.extraConfig = "Storage=volatile";
 
 
   ######
