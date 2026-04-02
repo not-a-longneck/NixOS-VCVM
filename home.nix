@@ -2,13 +2,14 @@
 
   imports = [
       inputs.nix-flatpak.homeManagerModules.nix-flatpak
-      inputs.plasma-manager.homeManagerModules.plasma-manager
+      inputs.plasma-manager.homeModules.plasma-manager
+
 
   ];
 
   home.username = "admin";
   home.homeDirectory = "/home/admin";
-  home.stateVersion = "25.05"; # Use the version you installed
+  home.stateVersion = "25.11"; # Use the version you installed
 
   ###################################
   #### OPEN FILES IN mimeApps    ####
@@ -80,7 +81,7 @@
 
 
   # Tor browser
-  home.file.".tor project/TorBrowser/Data/Browser/profile.default/user.js" = {
+  home.file.".tor-project/TorBrowser/Data/Browser/profile.default/user.js" = {
     text = ''
       user_pref("javascript.enabled", false);
       user_pref("extensions.torlauncher.prompt_at_startup", false);
