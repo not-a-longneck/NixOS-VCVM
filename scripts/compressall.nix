@@ -10,14 +10,15 @@
 
     (pkgs.writeShellScriptBin "compressall" ''
       #!/bin/bash
-      echo "Compress all script (Safe Trash Edition) 08/01-26"
+      echo "Compress all script (Safe Trash & Stats Edition) 08/01-26"
 
+      start_time=$(date +%s)
       current_folder_name=$(basename "''$PWD")
       old_files_dir="OLD - ''${current_folder_name}"
 
-      # Find video and image files
-      mapfile -d "" video_files < <(find . -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mov" -o -iname "*.avi" -o -iname "*.mkv" -o -iname "*.3gp" -o -iname "*.webm" -o -iname "*.flv" -o -iname "*.wmv" -o -iname "*.m4v" -o -iname "*.mpeg" -o -iname "*.mpg" -o -iname "*.divx" \) ! -iname "*compressed*" ! -iname "*smaller*" ! -iname "*cannotcompress*" -print0)
-      mapfile -d "" image_files < <(find . -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) ! -iname "*compressed*" ! -iname "*smaller*" ! -iname "*cannotcompress*" -print0)
+      # Find video and image files (removed exclusions so we can log skipped files accurately)
+      mapfile -d "" video_files < <(find . -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mov" -o -iname "*.avi" -o -iname "*.mkv" -o -iname "*.3gp" -o -iname "*.webm" -o -iname "*.flv" -o -iname "*.wmv" -o -iname "*.m4v" -o -iname "*.mpeg" -o -iname "*.mpg" -o -iname "*.divx" \) -print0)
+      mapfile -d "" image_files < <(find . -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) -print0)
 
       files=("''${video_files[@]}" "''${image_files[@]}")
       total_files=''${#files[@]}
@@ -30,10 +31,13 @@
       # Create the OLD folder immediately
       mkdir -p "''$old_files_dir"
 
+      # Stat tracking variables
       current_file=0
-      original_size=0
-      compressed_size=0
-      skipped_files=0
+      success_count=0
+      skipped_count=0
+      uncompressible_count=0
+      total_bytes_saved=0
+      file_status_log=()
 
       echo "Found ''${#video_files[@]} video(s) and ''${#image_files[@]} image(s)."
 
@@ -52,11 +56,19 @@
 
       for input in "''${files[@]}"; do
         input_basename="''${input##*/}"
+        basename_lower=$(echo "''$input_basename" | tr '[:upper:]' '[:lower:]')
+
+        if [[ "''$basename_lower" == *"compressed"* ]] || [[ "''$basename_lower" == *"smaller"* ]] || [[ "''$basename_lower" == *"cannotcompress"* ]]; then
+          echo "✓ Skipping: ''$input_basename"
+          ((skipped_count++))
+          file_status_log+=("➖ SKIPPED: ''$input_basename")
+          continue
+        fi
+
         ((current_file++))
         echo -e "\nProcessing file ''$current_file of ''$total_files: ''$input_basename"
 
         input_size=$(stat -c%s "''$input" 2>/dev/null || stat -f%z "''$input")
-        original_size=$((original_size + input_size))
         extension="''${input##*.}"
         extension_lower=$(echo "''$extension" | tr '[:upper:]' '[:lower:]')
 
@@ -92,20 +104,26 @@
           if [ ''$output_size -ge ''$input_size ]; then
             rm "''$output_file"
             mv "''$input" "''${input%.*}-cannotcompress.''${extension}"
-            ((skipped_files++))
+            ((uncompressible_count++))
+            file_status_log+=("❌ UNCOMPRESSIBLE: ''$input_basename")
           else
-            # Move to OLD folder instead of trashing immediately
             mv "''$input" "''$old_files_dir/"
-            compressed_size=$((compressed_size + output_size))
+            bytes_saved=$((input_size - output_size))
+            total_bytes_saved=$((total_bytes_saved + bytes_saved))
+            saved_mb=$(echo "scale=2; ''$bytes_saved / 1048576" | bc)
+            ((success_count++))
+            file_status_log+=("✅ COMPRESSED: ''$input_basename (Saved ''$saved_mb MB)")
             echo -e "\n✅ SUCCESS: Original moved to ''$old_files_dir"
           fi
         fi
       done
 
       # Final Trash Action
-      if [ -d "''$old_files_dir" ]; then
+      if [ -d "''$old_files_dir" ] && [ "$(ls -A "''$old_files_dir" 2>/dev/null)" ]; then
         echo -e "\nCleaning up... moving ''$old_files_dir to Trash 🗑️"
         trash-put "''$old_files_dir"
+      else
+        rmdir "''$old_files_dir" 2>/dev/null # Remove if empty
       fi
 
       # Rename parent folder logic
@@ -114,6 +132,35 @@
         new_dir_name="''${current_folder_name} - COMP"
         cd "''$parent_dir" && mv "''$current_folder_name" "''$new_dir_name" 2>/dev/null && echo "Folder renamed to ''$new_dir_name"
       fi
+
+      # Calculate Time Taken
+      end_time=$(date +%s)
+      elapsed_time=$((end_time - start_time))
+      h=$(( elapsed_time / 3600 ))
+      m=$(( (elapsed_time % 3600) / 60 ))
+      s=$(( elapsed_time % 60 ))
+      formatted_time=$(printf "%02d:%02d:%02d" ''$h ''$m ''$s)
+
+      # Calculate Total MB Saved
+      total_saved_mb=$(echo "scale=2; ''$total_bytes_saved / 1048576" | bc)
+
+      # Print Stats
+      echo -e "\n=================================================="
+      echo "📊 COMPRESSION SUMMARY REPORT"
+      echo "=================================================="
+      echo "⏱️  Time taken:                 ''$formatted_time"
+      echo "📁 Total files found:          ''$total_files"
+      echo "➖ Skipped (already compressed): ''$skipped_count"
+      echo "❌ Uncompressible (kept orig):   ''$uncompressible_count"
+      echo "✅ Successfully compressed:      ''$success_count"
+      echo "--------------------------------------------------"
+      echo "💾 TOTAL SPACE SAVED:          ''$total_saved_mb MB"
+      echo "=================================================="
+      echo "📝 FILE LOG:"
+      for log_entry in "''${file_status_log[@]}"; do
+        echo "  ''$log_entry"
+      done
+      echo "=================================================="
     '')
   ];
 }
