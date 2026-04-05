@@ -20,7 +20,7 @@ in
 
       # 2. Fix permissions for the admin user
       sudo chown -R admin:users "${configDir}"
-      echo "✅ Success! You've been restored to your previous state and can now run nix save. ✨"
+      echo "✅ Success! You've been restored to your previous state and you can now run manual nixos-rebuild switch command. ✨"
     
     }
   '';
