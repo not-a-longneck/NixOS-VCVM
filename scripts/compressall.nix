@@ -98,7 +98,7 @@
 
         # --- AFTERCARE ---
         if [ -f "''$output_file" ] && [ -s "''$output_file" ]; then
-          output_size=$(stat -c%s "$output_file" 2>/dev/null || stat -f%z "$output_file")
+          output_size=$(stat -c%s "''$output_size" 2>/dev/null || stat -f%z "''$output_file")
           if [ ''$output_size -ge ''$input_size ]; then
             rm "''$output_file"
             mv "''$input" "''${input%.*}-cannotcompress.''${extension}"
