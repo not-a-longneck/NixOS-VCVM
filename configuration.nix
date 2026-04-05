@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ./scripts/nix-save.nix
       ./scripts/compressall.nix
+      ./scripts/nix-restore.nix
     ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
