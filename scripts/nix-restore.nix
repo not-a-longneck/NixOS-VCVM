@@ -12,7 +12,7 @@ in
         return 1
       fi
 
-      echo "🛠️ Restoring system from ${backupDir}..."
+      echo "🛠️ Restoring config files from ${backupDir}..."
 
       # 1. Swap the folders
       sudo rm -rf "${configDir}"
@@ -20,7 +20,7 @@ in
 
       # 2. Fix permissions for the admin user
       sudo chown -R admin:users "${configDir}"
-      echo "✅ Success! You've been restored to your previous state and you can now run manual nixos-rebuild switch command. ✨"
+      echo "✅ Success! Config files has been restored and you can now run manual nixos-rebuild switch command. ✨"
     
     }
   '';
