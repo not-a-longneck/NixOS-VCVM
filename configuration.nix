@@ -13,9 +13,10 @@
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  #######################
-  ### HARDWARE        ###
-  #######################
+
+  # ==============================
+  # HARDWARE
+  # ==============================
 
 
 
@@ -36,6 +37,40 @@
     user_allow_other
   '';
 
+
+
+
+
+
+  # ==============================
+  # PRIVACY
+  # ==============================
+
+
+  services.journald.extraConfig = ''
+    Storage=volatile
+    ForwardToSyslog=no
+    ForwardToKMsng=no
+    ForwardToConsole=no
+    ForwardToWall=no
+  '';
+
+
+
+  fileSystems."/home/admin/.cache" = {
+    device = "tmpfs";
+    fsType = "tmpfs";
+    options = [ "nosuid" "nodev" "relatime" "size=1G" ];
+  };
+
+  # disable core dumps on crash
+  systemd.coredump.enable = false;
+
+
+
+  # ==============================
+  # DE
+  # ==============================
 
 
 
@@ -166,21 +201,6 @@
       copypaste = "spice-vdagent";
   };
 
-  # ===============================
-  # ==== Privacy               ====
-  # ===============================
-
-  fileSystems."/home/admin/.cache" = {
-    device = "tmpfs";
-    fsType = "tmpfs";
-    options = [ "nosuid" "nodev" "relatime" "size=1G" ];
-  };
-
-  # disable core dumps on crash
-  systemd.coredump.enable = false;
-
-  # keep logs in ram
-  services.journald.extraConfig = "Storage=volatile";
 
 
   ######
