@@ -7,15 +7,16 @@
 
       echo "Force-syncing config from GitHub..."
       
-      # 1. Fetch the latest updates
-      sudo git -C "$CONFIG_DIR" fetch --all
+      # 1. Fetch as the logged-in user (no sudo needed!)
+      git -C "$CONFIG_DIR" fetch --all
       
-      # 2. Force local files to match the remote 'main' branch
-      # This wipes any local edits so GitHub is always the boss!
-      if sudo git -C "$CONFIG_DIR" reset --hard origin/main; then
+      # 2. Reset as the logged-in user
+      if git -C "$CONFIG_DIR" reset --hard origin/main; then
         
         echo "Rebuilding NixOS..."
-        if sudo nixos-rebuild switch --flake "$CONFIG_DIR"; then
+        # 3. Only use sudo for the actual system rebuild
+        if sudo nixos-rebuild switch --flake "$CONFIG_DIR";
+        then
           gen_num=$(readlink /nix/var/nix/profiles/system | cut -d- -f2)
           echo "Successfully updated to Generation $gen_num! 🎉"
         else
@@ -23,7 +24,7 @@
         fi
 
       else
-        echo "Sync failed! ❌ Check your network."
+        echo "Sync failed! ❌ Check your network or SSH keys."
       fi
     }
   '';
