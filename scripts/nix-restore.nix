@@ -20,13 +20,8 @@ in
 
       # 2. Fix permissions for the admin user
       sudo chown -R admin:users "${configDir}"
-
-      echo "❄️ Rebuilding restored configuration..."
-      if sudo nixos-rebuild switch --flake "${configDir}#nixos"; then
-        echo "✅ Success! You've been restored to your previous state. ✨"
-      else
-        echo "❌ Rebuild failed. Something might be deeper than just the config!"
-      fi
+      echo "✅ Success! You've been restored to your previous state and can now run nix save. ✨"
+    
     }
   '';
 }
