@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # This automatically provides all the tools your script needs!
   environment.systemPackages = with pkgs; [
     ffmpeg
     bc
@@ -9,37 +8,17 @@
     chafa
     trash-cli
 
-    # This creates your global 'compressall' command
-    (pkgs.writeShellScriptBin "compressall" ''
-
-
-  # ==========================================
-  # SCRIPT START
-  # ==========================================
-{ pkgs, ... }:
-
-{
-  environment.systemPackages = with pkgs; [
-    ffmpeg
-    bc
-    imagemagick
-    chafa
-    trash-cli  # Required for the trash command
-
     (pkgs.writeShellScriptBin "compressall" ''
       #!/bin/bash
       echo "Compress all script (Trash Edition) 08/01-26"
 
-      # Get the name of the current directory for the final rename
-      current_folder_name=$(basename "$PWD")
+      # We use ''$ to tell Nix "this is a literal dollar sign for Bash"
+      current_folder_name=$(basename "''$PWD")
 
-      # Find video files - Changed '' to "" to fix the Nix error
+      # Find video and image files
       mapfile -d "" video_files < <(find . -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mov" -o -iname "*.avi" -o -iname "*.mkv" -o -iname "*.3gp" -o -iname "*.webm" -o -iname "*.flv" -o -iname "*.wmv" -o -iname "*.m4v" -o -iname "*.mpeg" -o -iname "*.mpg" -o -iname "*.divx" \) ! -iname "*compressed*" ! -iname "*smaller*" ! -iname "*cannotcompress*" -print0)
-
-      # Find image files
       mapfile -d "" image_files < <(find . -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) ! -iname "*compressed*" ! -iname "*smaller*" ! -iname "*cannotcompress*" -print0)
 
-      # Escaped the ${} with ''${} so Nix ignores them
       files=("''${video_files[@]}" "''${image_files[@]}")
       total_files=''${#files[@]}
       current_file=0
@@ -97,7 +76,7 @@
           output_file="''${input%.*}-smaller-crf28.mp4"
           ffmpeg -i "''$input" -vcodec libx265 -crf 28 "''$output_file" -progress pipe:1 2>&1 | while IFS= read -r line; do
             if [[ "''$line" == "out_time_ms="* ]]; then
-              elapsed=$(echo "''$line" | cut -d= -f2 | awk '{print int($1 / 1000000)}')
+              elapsed=$(echo "''$line" | cut -d= -f2 | awk '{print int( ''$line / 1000000 )}' 2>/dev/null || echo 0)
               show_progress_bar ''$duration ''$elapsed
             fi
           done
@@ -105,10 +84,8 @@
 
         elif [[ "''$extension_lower" == "jpg" || "''$extension_lower" == "jpeg" || "''$extension_lower" == "png" ]]; then
           output_file="''${input%.*}-smaller.''${extension}"
-          [ -x "''$(command -v chafa)" ] && chafa --size 60x30 "''$input"
+          [ -x "$(command -v chafa)" ] && chafa --size 60x30 "''$input"
           convert "''$input" -resize '1080x1080>' -quality 85 -strip "''$output_file" 2>&1
-        else
-          continue
         fi
 
         if [ -f "''$output_file" ] && [ -s "''$output_file" ]; then
@@ -118,7 +95,6 @@
             mv "''$input" "''${input%.*}-cannotcompress.''${extension}"
             ((skipped_files++))
           else
-            # TRASH LOGIC: Sends original to KDE Trash instead of an 'old' folder
             if trash-put "''$input"; then
               compressed_size=$((compressed_size + output_size))
               echo -e "\n✅ SUCCESS: Original sent to Trash 🗑️"
@@ -128,24 +104,11 @@
       done
 
       # Rename parent folder logic
-      parent_dir=$(dirname "$PWD")
+      parent_dir=$(dirname "''$PWD")
       if [[ ! "''$current_folder_name" =~ \ -\ COMP$ ]]; then
         new_dir_name="''${current_folder_name} - COMP"
         cd "''$parent_dir" && mv "''$current_folder_name" "''$new_dir_name" 2>/dev/null && echo "Folder renamed to ''$new_dir_name"
       fi
-    '')
-  ];
-}
-
-  # ==========================================
-  # SCRIPT END
-  # ==========================================
-
-
-
-
-
-
     '')
   ];
 }
