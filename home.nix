@@ -32,10 +32,11 @@
   };
 
   ###################################
-  #### APPS TO INSTAL WITH HM    ####
+  #### APPS TO INSTAL WITH HM    
   ###################################
 
   programs.home-manager.enable = true;
+  programs.git.enable = true;
 
 
   # Packages just for your user
