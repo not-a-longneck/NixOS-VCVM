@@ -117,15 +117,6 @@ services.flatpak.overrides."org.jdownloader.JDownloader".Context = {
 
   home.file."Unraid".source = config.lib.file.mkOutOfStoreSymlink "/mnt/tower/backups";
 
-  ####################################
-  #### GITHUB                     ####
-  ####################################
-  
-  programs.git = {
-    enable = true;
-  };
-
-
 
 
 
