@@ -1,40 +1,25 @@
 { ... }:
 
 {
-
-###############################################
-### GIT AUTO COMMIT (Home Manager Link Edition)
-###############################################
-
-
-environment.interactiveShellInit = ''
+  environment.interactiveShellInit = ''
     nix-save() {
       CONFIG_DIR="/etc/nixos"
 
-      echo -n "Enter commit message (or press Enter for 'Auto-backup'): "
-      read -r user_msg
+      echo "Fetching latest config from GitHub..."
+      # Pulling via HTTPS completely bypasses the need for SSH keys/logins
+      if git -C "$CONFIG_DIR" pull https://github.com/not-a-longneck/NixOS-VCVM main; then
 
-      # No sudo needed for git anymore!
-      git -C "$CONFIG_DIR" add .
-
-      # Sudo is still needed here because we are changing the OS
-      if sudo nixos-rebuild switch --flake "$CONFIG_DIR"; then
-
-        gen_num=$(readlink /nix/var/nix/profiles/system | cut -d- -f2)
-
-        if [ -z "$user_msg" ]; then
-          final_msg="Gen $gen_num: Auto-backup $(date +'%d-%m-%Y')"
+        echo "Rebuilding NixOS..."
+        if sudo nixos-rebuild switch --flake "$CONFIG_DIR"; then
+          gen_num=$(readlink /nix/var/nix/profiles/system | cut -d- -f2)
+          echo "Successfully updated and rebuilt to Generation $gen_num! 🎉"
         else
-          final_msg="Gen $gen_num: $user_msg"
+          echo "Rebuild failed! ❌ Check the errors above."
         fi
 
-        git -C "$CONFIG_DIR" commit -m "$final_msg"
-        git -C "$CONFIG_DIR" push origin main
-        echo "Successfully pushed Generation $gen_num to GitHub!"
       else
-        echo "Rebuild failed, nothing committed."
+        echo "Git pull failed! ❌ Check your network or repo URL."
       fi
     }
   '';
-
 }
