@@ -119,21 +119,6 @@ services.flatpak.overrides."org.jdownloader.JDownloader".Context = {
 
 
 
-  ####################################
-  #### GITHUB                     ####
-  ####################################
-
-  programs.git = {
-    enable = true;
-    userName  = "NixOS";
-    userEmail = "hjalte81@gmail.com";
-
-    # Optional: Extra settings for a better workflow
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-    };
-  };
 
   #-----------
 
