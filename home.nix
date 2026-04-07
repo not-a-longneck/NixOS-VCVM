@@ -114,11 +114,9 @@ services.flatpak.overrides."org.jdownloader.JDownloader".Context = {
   # PLASMA KDE SPECIFIC
   # ====================================
   
-  {
-    programs.plasma = {
-      enable = true;
-      configFile."ksmserverrc"."General"."loginMode" = "emptySession";
-    };
+  programs.plasma = {
+    enable = true;
+    configFile."ksmserverrc"."General"."loginMode" = "emptySession";
   };
 
   ####################################
