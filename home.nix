@@ -119,7 +119,7 @@ services.flatpak.overrides."org.jdownloader.JDownloader".Context = {
       enable = true;
       configFile."ksmserverrc"."General"."loginMode" = "emptySession";
     };
-  }
+  };
 
   ####################################
   #### Symlinks                   ####
