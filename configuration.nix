@@ -152,20 +152,10 @@
       device = "//192.168.1.53/backups";
       fsType = "cifs";
       # Force read-write and give you (uid=1000) full control
-      options = [
-        "guest"          # No password needed
-        "uid=1000"       # Tells Linux the 'admin' user owns everything here
-        "gid=100"        # The 'users' group
-        "forceuid"       # <--- FORCES recursive ownership for 'admin'
-        "forcegid"       # <--- FORCES recursive ownership for 'users'
-        "noperm"         # CRITICAL: Tells the client to stop local permission checks
-        "nobrl"          # <--- THIS IS THE MAGIC KEY
-        "cache=none"     # Prevents Linux from "holding onto" the file in RAM
-        "iocharset=utf8"
-        "vers=3.0"       # Ensures you're using a modern SMB version
-        "soft"           # Prevents the VM from freezing if Unraid goes offline
-      ];
+      options = [ "guest,uid=1000,gid=100,rw,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm,_netdev,x-systemd.automount,x-systemd.idle-timeout=60" ];
     };
+
+
 
   #grant admin sudo rights to vc drives
   services.udev.extraRules = ''
