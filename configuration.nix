@@ -156,10 +156,15 @@
     };
 
 
-fileSystems."/mnt/shared" = {
-  device = "share-home"; # This must match the 'Mount Tag' in VM settings
-  fsType = "virtiofs";
-};
+  fileSystems."/mnt/shared" = {
+    device = "share-home";
+    fsType = "virtiofs";
+    options = [ 
+      "nofail"      # <--- This is the magic word!
+      "x-systemd.automount" 
+      "x-systemd.idle-timeout=60" 
+    ];
+  };
 
 
   #grant admin sudo rights to vc drives
