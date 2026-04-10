@@ -159,7 +159,6 @@
 fileSystems."/mnt/shared" = {
   device = "share-home"; # This must match the 'Mount Tag' in VM settings
   fsType = "virtiofs";
-  options = [ "nofail" ];
 };
 
 
