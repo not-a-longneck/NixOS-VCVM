@@ -1,21 +1,38 @@
 #!/usr/bin/env bash
 
+# Configuration
 REPO_URL="https://github.com/not-a-longneck/NixOS-VCVM.git"
+CONFIG_DIR="/etc/nixos"
+BACKUP_DIR="/etc/nixos.old"
 
-echo "🚀 Bootstrapping NixOS to /etc/nixos..."
+echo "🚀 Starting NixOS Bootstrap..."
 
-# 1. Clean out the default installation files
-sudo rm -rf /etc/nixos/*
+# 1. Backup the installer's generated files
+echo "📦 Backing up installer files to $BACKUP_DIR..."
+sudo cp -r "$CONFIG_DIR" "$BACKUP_DIR"
 
-# 2. Clone your repo directly into /etc/nixos
-sudo git clone "$REPO_URL" /etc/nixos
+# 2. Clear the current config folder for the new clone
+sudo rm -rf "$CONFIG_DIR"/*
 
-# 3. Fix permissions so your 'admin' user owns it (as per your config)
-sudo chown -R admin:users /etc/nixos 
+# 3. Clone your GitHub repo
+echo "🔄 Cloning configuration from GitHub..."
+sudo git clone "$REPO_URL" "$CONFIG_DIR"
 
-# 4. Apply the config using your 'nixos' output name
-sudo nixos-rebuild boot --flake /etc/nixos#nixos [cite: 115, 164]
+# 4. Restore the VM's specific hardware config
+# This ensures drive IDs and bootloader settings match this specific VM
+echo "🛠️ Restoring local hardware-configuration.nix..."
+sudo cp "$BACKUP_DIR/hardware-configuration.nix" "$CONFIG_DIR/hardware-configuration.nix"
 
-echo "✅ Done! Rebooting in 5 seconds..."
-sleep 5
-reboot
+# 5. Fix ownership for the 'admin' user
+sudo chown -R admin:users "$CONFIG_DIR"
+
+# 6. Rebuild and Reboot
+echo "❄️ Building the new system configuration..."
+if sudo nixos-rebuild boot --flake "$CONFIG_DIR#nixos"; then
+    echo "✅ Success! Rebooting in 5 seconds..."
+    sleep 5
+    reboot
+else
+    echo "❌ Build failed! Check the errors above."
+    exit 1
+fi
