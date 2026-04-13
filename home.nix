@@ -44,6 +44,8 @@
     vlc
     tor-browser
     peazip
+    rustdesk
+      
 
   ];
 
