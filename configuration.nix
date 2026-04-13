@@ -148,16 +148,16 @@
 
 
   # ==============================
-  # VM Specific          ====
+  # VM SPECIFIC
   # ==============================
 
 
   # This handles the system-level daemon
   services.spice-vdagentd.enable = true;
 
-    # ================================
-    # ==== Mounts and filesystem  ====
-    # ================================
+  # ================================
+  # MOUNTS AND FILESYSTEM
+  # ================================
 
 
     fileSystems."/mnt/tower/backups" = {
@@ -184,6 +184,10 @@
     KERNEL=="dm-*", ENV{ID_FS_USAGE}=="filesystem", OWNER="admin", GROUP="users", MODE="0775"
   '';
 
+  # ================================
+  # GIT
+  # ================================
+
   # Ensure ownership over nix folder and set up git:
   system.activationScripts.nixosFolderPermissions = {
     text = ''
@@ -206,7 +210,7 @@
 
 
   # ===============================
-  # ==== User settings         ====
+  # User settings         
   # ===============================
 
   # Set your time zone.
