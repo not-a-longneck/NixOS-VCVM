@@ -184,11 +184,22 @@
     KERNEL=="dm-*", ENV{ID_FS_USAGE}=="filesystem", OWNER="admin", GROUP="users", MODE="0775"
   '';
 
-  # Ensure ownership over nix folder:
+  # Ensure ownership over nix folder and set up git:
   system.activationScripts.nixosFolderPermissions = {
     text = ''
-      chown -R admin:users /etc/nixos
-      chmod -R 755 /etc/nixos
+    # Set ownership and permissions
+    chown -R admin:users /etc/nixos
+    chmod -R 755 /etc/nixos
+    
+    # Initialize git repo if not already one
+    if [ ! -d /etc/nixos/.git ]; then
+      cd /etc/nixos
+      ${pkgs.git}/bin/git init
+      ${pkgs.git}/bin/git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
+      echo "hardware-configuration.nix" > .gitignore
+      ${pkgs.git}/bin/git config user.name "admin"
+      ${pkgs.git}/bin/git config user.email "admin@nixos"
+    fi
     '';
   };
 
