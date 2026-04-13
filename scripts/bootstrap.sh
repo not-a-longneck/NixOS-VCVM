@@ -1,29 +1,33 @@
 #!/usr/bin/env bash
-
+set -e  # Exit on any error
+ 
 REPO_URL="https://github.com/not-a-longneck/NixOS-VCVM.git"
-
-echo "🚀 Starting UEFI-Aware Bootstrap..."
-
-# 1. Backup original files
-sudo cp -r /etc/nixos /etc/nixos.old
-
-# 2. Clear and Clone
-sudo rm -rf /etc/nixos/*
-sudo git clone "$REPO_URL" /etc/nixos
-
-# 3. FIX BOOTLOADER: Use the VM's native hardware-configuration
-# This contains the 'systemd-boot' settings if you installed with UEFI
-sudo cp /etc/nixos.old/hardware-configuration.nix /etc/nixos/hardware-configuration.nix
-
-# 4. Permissions for admin
-sudo chown -R admin:users /etc/nixos
-
-# 5. Build and Reboot
-# We use 'switch' to ensure the bootloader installs correctly now
-if sudo nixos-rebuild switch --flake /etc/nixos#nixos; then
-    echo "✅ Success! Rebooting..."
-    sleep 3
-    reboot
-else
-    echo "❌ Still failing. Manual check required."
+CONFIG_DIR="/etc/nixos"
+ 
+echo "🚀 NixOS Bootstrap Script"
+echo "========================="
+echo ""
+ 
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then 
+  echo "❌ Please run as root (use sudo)"
+  exit 1
 fi
+ 
+echo "📦 Step 1: Removing default NixOS config..."
+rm -rf "$CONFIG_DIR"
+ 
+echo "📥 Step 2: Cloning configuration from GitHub..."
+git clone "$REPO_URL" "$CONFIG_DIR"
+ 
+echo "🔑 Step 3: Setting permissions..."
+chown -R admin:users "$CONFIG_DIR"
+chmod -R 755 "$CONFIG_DIR"
+ 
+echo "❄️  Step 4: Running first NixOS rebuild..."
+echo "   (This may take a while...)"
+nixos-rebuild switch --flake "$CONFIG_DIR#nixos"
+ 
+echo ""
+echo "✨ Bootstrap complete!"
+echo "   You can now use 'nix-save' to pull updates from GitHub."
