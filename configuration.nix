@@ -188,25 +188,13 @@
   # GIT
   # ================================
 
-  # Ensure ownership over nix folder and set up git:
-   system.activationScripts.nixosFolderPermissions = {
+  # Ensure ownership over nix folder:
+  system.activationScripts.nixosFolderPermissions = {
     text = ''
-      # Set ownership and permissions
       chown -R admin:users /etc/nixos
       chmod -R 755 /etc/nixos
-      
-      # Initialize git repo if not already one (as admin user)
-      if [ ! -d /etc/nixos/.git ]; then
-        su - admin -c "cd /etc/nixos && \
-          ${pkgs.git}/bin/git init && \
-          ${pkgs.git}/bin/git remote add origin https://github.com/not-a-longneck/NixOS-VCVM.git && \
-          echo 'hardware-configuration.nix' > .gitignore && \
-          ${pkgs.git}/bin/git config user.name 'admin' && \
-          ${pkgs.git}/bin/git config user.email 'admin@nixos'"
-      fi
     '';
   };
-
 
 
   # ===============================
