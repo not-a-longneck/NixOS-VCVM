@@ -22,10 +22,22 @@
 
 
 
-  # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/vda";
-  boot.loader.grub.useOSProber = true;
+  # Bootloader - works with both BIOS and UEFI
+  boot.loader.grub = {
+    enable = true;
+    # Auto-detect: if /boot is FAT (EFI partition), use UEFI mode, otherwise BIOS
+    device = if (builtins.any (fs: fs.mountPoint == "/boot" && fs.fsType == "vfat") 
+      (builtins.attrValues config.fileSystems)) 
+    then "nodev" 
+      else "/dev/vda";
+    efiSupport = builtins.any (fs: fs.mountPoint == "/boot" && fs.fsType == "vfat") 
+      (builtins.attrValues config.fileSystems);
+    useOSProber = true;
+  };
+  
+  boot.loader.efi.canTouchEfiVariables = 
+  builtins.any (fs: fs.mountPoint == "/boot" && fs.fsType == "vfat") 
+  (builtins.attrValues config.fileSystems);
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
