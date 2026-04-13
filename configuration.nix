@@ -195,7 +195,7 @@
     if [ ! -d /etc/nixos/.git ]; then
       cd /etc/nixos
       ${pkgs.git}/bin/git init
-      ${pkgs.git}/bin/git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
+      ${pkgs.git}/bin/git remote add origin https://github.com/not-a-longneck/NixOS-VCVM.git
       echo "hardware-configuration.nix" > .gitignore
       ${pkgs.git}/bin/git config user.name "admin"
       ${pkgs.git}/bin/git config user.email "admin@nixos"
