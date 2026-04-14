@@ -21,18 +21,19 @@ echo "📦 Step 2: Removing default NixOS config..."
 rm -rf "$CONFIG_DIR"
 
 echo "📥 Step 3: Cloning configuration from GitHub..."
-nix-shell -p git --run "git clone $REPO_URL $CONFIG_DIR"
-
-echo "🔧 Step 4: Restoring hardware-configuration.nix..."
-cp /tmp/hardware-configuration.nix "$CONFIG_DIR/hardware-configuration.nix"
-
-echo "🔑 Step 5: Setting permissions..."
-chown -R admin:users "$CONFIG_DIR"
-chmod -R 755 "$CONFIG_DIR"
-
-echo "📝 Step 6: Adding hardware-configuration.nix to git..."
-cd "$CONFIG_DIR"
-nix-shell -p git --run "git add hardware-configuration.nix"
+nix-shell -p git --run '
+  git clone $REPO_URL $CONFIG_DIR
+  
+  echo "🔧 Step 4: Restoring hardware-configuration.nix..."
+  cp /tmp/hardware-configuration.nix "$CONFIG_DIR/hardware-configuration.nix"
+  
+  echo "🔑 Step 5: Setting permissions..."
+  chown -R admin:users "$CONFIG_DIR"
+  chmod -R 755 "$CONFIG_DIR"
+  
+  echo "📝 Step 6: Adding hardware-configuration.nix to git..."
+  cd "$CONFIG_DIR"
+  git add hardware-configuration.nix'
 
 echo "❄️  Step 7: Running first NixOS rebuild..."
 echo "   (This may take a while...)"
