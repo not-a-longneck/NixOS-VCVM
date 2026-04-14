@@ -1,0 +1,3 @@
+hardware-configuration.nix
+*.bak
+.nix-optimise-pre
