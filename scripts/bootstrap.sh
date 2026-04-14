@@ -32,7 +32,7 @@ chmod -R 755 "$CONFIG_DIR"
 
 echo "📝 Step 6: Adding hardware-configuration.nix to git..."
 cd "$CONFIG_DIR"
-git add hardware-configuration.nix
+nix-shell -p git --run "git add hardware-configuration.nix"
 
 echo "❄️  Step 7: Running first NixOS rebuild..."
 echo "   (This may take a while...)"
