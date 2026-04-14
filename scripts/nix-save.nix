@@ -22,7 +22,7 @@ in
       git -C "${configDir}" fetch origin
       
       # Hard reset to match GitHub + Clean up any local junk
-      if git -C "${configDir}" reset --hard origin/main && git -C "${configDir}" clean -fd; then
+      if git -C "${configDir}" fetch origin && git -C "${configDir}" reset --hard origin/main; then
         echo "❄️ Step 3: Rebuilding NixOS..."
         if sudo nixos-rebuild switch --flake "${configDir}#nixos"; then
           gen_num=$(readlink /nix/var/nix/profiles/system | cut -d- -f2)
