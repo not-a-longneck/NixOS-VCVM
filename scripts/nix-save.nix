@@ -29,29 +29,10 @@ in
           echo "✨ Success! Updated to Generation $gen_num!"
         else
           echo "❌ Rebuild failed! Your old files are safe in ${backupDir}"
+          echo "💡 Run 'nix-restore' to get back to the working version"
         fi
       else
         echo "❌ Sync failed! Check your connection to GitHub."
-      fi
-    }
-
-    # --- The Emergency Restore Command ---
-    nix-restore() {
-      if [ ! -d "${backupDir}" ]; then
-        echo "❌ Error: No backup found at ${backupDir}!"
-        return 1
-      fi
-
-      echo "🛠️ Restoring from ${backupDir}..."
-      sudo rm -rf "${configDir}"
-      sudo cp -r "${backupDir}" "${configDir}"
-      sudo chown -R admin:users "${configDir}"
-
-      echo "❄️ Rebuilding restored configuration..."
-      if sudo nixos-rebuild switch --flake "${configDir}#nixos"; then
-        echo "✅ System restored successfully! ✨"
-      else
-        echo "❌ Rebuild of the backup failed!"
       fi
     }
   '';
