@@ -21,7 +21,7 @@ echo "📦 Step 2: Removing default NixOS config..."
 rm -rf "$CONFIG_DIR"
 
 echo "📥 Step 3: Cloning configuration from GitHub..."
-git clone "$REPO_URL" "$CONFIG_DIR"
+nix-shell -p git --run "git clone $REPO_URL $CONFIG_DIR"
 
 echo "🔧 Step 4: Restoring hardware-configuration.nix..."
 cp /tmp/hardware-configuration.nix "$CONFIG_DIR/hardware-configuration.nix"
