@@ -30,11 +30,11 @@ echo "🔑 Step 5: Setting permissions..."
 chown -R admin:users "$CONFIG_DIR"
 chmod -R 755 "$CONFIG_DIR"
 
-echo "📝 Step 5.5: Adding hardware-configuration.nix to git..."
+echo "📝 Step 6: Adding hardware-configuration.nix to git..."
 cd "$CONFIG_DIR"
 git add hardware-configuration.nix
 
-echo "❄️  Step 6: Running first NixOS rebuild..."
+echo "❄️  Step 7: Running first NixOS rebuild..."
 echo "   (This may take a while...)"
 nixos-rebuild switch --flake "$CONFIG_DIR#nixos"
 
