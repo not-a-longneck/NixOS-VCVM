@@ -7,7 +7,7 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+      /etc/nixos/hardware-configuration.nix
       ./scripts/nix-save.nix
       ./scripts/compressall.nix
       ./scripts/nix-restore.nix
