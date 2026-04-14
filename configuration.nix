@@ -1,6 +1,6 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# and in the NixOS manual (accessible by running 'nixos-help').
 
 { config, pkgs, ... }:
 
@@ -64,7 +64,7 @@
   services.journald.extraConfig = ''
     Storage=volatile
     ForwardToSyslog=no
-    ForwardToKMsng=no
+    ForwardToKMsg=no
     ForwardToConsole=no
     ForwardToWall=no
   '';
@@ -83,7 +83,7 @@
 
 
   # ==============================
-  # DESKTP ENVIRENMENT
+  # DESKTOP ENVIRONMENT
   # ==============================
 
 
@@ -97,11 +97,11 @@
   services.desktopManager.plasma6.enable = true;
 
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with 'passwd'.
   users.users.admin = {
     isNormalUser = true;
     description = "admin";
-    extraGroups = [ "networkmanager" "wheel""video" "render" "storage" "disk"];
+    extraGroups = [ "networkmanager" "wheel" "video" "render" "storage" "disk"];
     hashedPassword = "$6$Osqk1/PTMVPFxz.R$xnhXNz5ePRgPQZtGMaXlSDInDsrwNocuRqVmTfZcq4ujAer6PiesG27vZpkxdMJh3gtSzP9qOlTs8CTP9Pf.f/";
 
   };
