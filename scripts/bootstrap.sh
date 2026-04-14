@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-set -e  # Exit on any error
+set -e
 
 REPO_URL="https://github.com/not-a-longneck/NixOS-VCVM.git"
 CONFIG_DIR="/etc/nixos"
+# Automatically detects the user who ran sudo
+REAL_USER=${SUDO_USER:-$USER}
+
+echo "🚀 NixOS Post-Install Bootstrap"
+echo "==============================="
 
 if [ "$EUID" -ne 0 ]; then 
   echo "❌ Please run as root (use sudo)"
@@ -15,25 +20,25 @@ cp "$CONFIG_DIR/hardware-configuration.nix" /tmp/hardware-configuration.nix
 echo "📦 Step 2: Removing default NixOS config..."
 rm -rf "$CONFIG_DIR"
 
-echo "📥 Steps 3: Cloning and prepping config..."
+echo "📥 Steps 3-6: Cloning and prepping config..."
 nix-shell -p git --run "$(cat <<EOF
   git clone "$REPO_URL" "$CONFIG_DIR"
   cp /tmp/hardware-configuration.nix "$CONFIG_DIR/hardware-configuration.nix"
   
   cd "$CONFIG_DIR"
-  # This prevents the 'dubious ownership' error
   git config --global --add safe.directory "$CONFIG_DIR"
   git add hardware-configuration.nix
 EOF
 )"
 
-echo "🔑 Step 4: Setting permissions..."
-# Using root:root for the first run is safer on a fresh install
-chown -R root:root "$CONFIG_DIR"
-chmod -R 755 "$CONFIG_DIR"
-
-echo "❄️ Step 5: Running first NixOS rebuild..."
+echo "❄️ Step 7: Running NixOS rebuild..."
+# We rebuild first while root owns the files to ensure the flake can be read
 nixos-rebuild switch --flake "$CONFIG_DIR#nixos"
 
+echo "🔑 Step 8: Handing ownership back to $REAL_USER..."
+chown -R "$REAL_USER":users "$CONFIG_DIR"
+chmod -R 755 "$CONFIG_DIR"
+
+echo ""
 echo "✨ Bootstrap complete!"
-echo "   You can now use 'nix-save' to pull updates from GitHub."
+echo "   You can now edit files in $CONFIG_DIR without sudo."
