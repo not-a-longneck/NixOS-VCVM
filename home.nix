@@ -45,7 +45,9 @@
     tor-browser
     peazip
     rustdesk
-      
+    czkawka-full
+    qdirstat
+    kdePackages.filelight      
 
   ];
 
