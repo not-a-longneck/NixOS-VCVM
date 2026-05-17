@@ -47,7 +47,8 @@
     rustdesk
     czkawka-full
     qdirstat
-    kdePackages.filelight      
+    kdePackages.filelight
+    kdePackages.kate      
 
   ];
 

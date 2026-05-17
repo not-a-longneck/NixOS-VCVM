@@ -138,7 +138,6 @@
     spice-vdagent # for vm features
     cifs-utils
     veracrypt
-    kdePackages.kate
     ntfs3g
     pyload-ng
 
