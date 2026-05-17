@@ -27,7 +27,7 @@ nix-shell -p git --run "$(cat <<EOF
   
   cd "$CONFIG_DIR"
   git config --global --add safe.directory "$CONFIG_DIR"
-  git add hardware-configuration.nix
+  git add -f hardware-configuration.nix
 EOF
 )"
 
