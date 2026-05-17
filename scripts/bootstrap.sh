@@ -14,8 +14,15 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-echo "💾 Step 1: Saving hardware-configuration.nix..."
-cp "$CONFIG_DIR/hardware-configuration.nix" /tmp/hardware-configuration.nix
+echo "💾 Step 1: Saving hardware-configuration.nix (if it exists)..."
+if [ -f "$CONFIG_DIR/hardware-configuration.nix" ]; then
+  cp "$CONFIG_DIR/hardware-configuration.nix" /tmp/hardware-configuration.nix
+else
+  echo "⚠️ No existing hardware-configuration.nix found, generating a fresh one..."
+  mkdir -p "$CONFIG_DIR"
+  nixos-generate-config --root /
+  cp "$CONFIG_DIR/hardware-configuration.nix" /tmp/hardware-configuration.nix
+fi
 
 echo "📦 Step 2: Removing default NixOS config..."
 rm -rf "$CONFIG_DIR"
