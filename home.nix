@@ -121,9 +121,14 @@ services.flatpak.overrides."org.jdownloader.JDownloader".Context = {
   # ====================================
   
   programs.plasma = {
-    enable = true;
-    configFile."ksmserverrc"."General"."loginMode" = "emptySession";
+    enable = true; [cite: 129]
+    configFile."ksmserverrc"."General"."loginMode" = "emptySession"; [cite: 130]
+    
+    # Disable file previews/thumbnails in Dolphin
+    configFile."dolphinrc"."NKCoreSettings"."LocalFilesPreviews" = false;
+    configFile."dolphinrc"."NKCoreSettings"."RemoteFilesPreviews" = false;
   };
+
 
   ####################################
   #### Symlinks                   ####

@@ -74,7 +74,7 @@
   fileSystems."/home/admin/.cache" = {
     device = "tmpfs";
     fsType = "tmpfs";
-    options = [ "nosuid" "nodev" "relatime" "size=1G" ];
+    options = [ "nosuid" "nodev" "relatime" "size=512M" ];
   };
 
   # disable core dumps on crash
